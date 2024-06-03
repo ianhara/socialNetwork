@@ -15,7 +15,7 @@ const userSchema = new Schema(
       type:String,
       required: true,
       unique:true,
-      match:[`/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`]
+      match:[/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/]
 
     },
     thoughts: [{
@@ -40,7 +40,7 @@ const userSchema = new Schema(
   }
 );
 
-// Create a virtual property `fullName` that gets and sets the user's full name
+// Create a virtual property friend count which counts friends 
 userSchema
   .virtual('friendCount')
   // Getter
