@@ -51,14 +51,14 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-   async addFriend(req, res) {
+  async addFriend(req, res) {
     try {
       const { userId } = req.params;
-      const { friendId } = req.body; // Assuming the request body contains the friendId
+      const { friendId } = req.body;
 
       const user = await User.findOneAndUpdate(
         { _id: userId },
-        { $addToSet: { friends: friendId } }, // Ensure friendId is passed to $addToSet
+        { $addToSet: { friends: friendId } },
         { runValidators: true, new: true }
       );
 
@@ -96,15 +96,15 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndRemove({ _id: req.params.userId });
-  
+
       if (!user) {
         return res.status(404).json({ message: 'No user with this id!' });
       }
-  
+
       res.json({ message: 'User successfully deleted!' });
     } catch (err) {
       res.status(500).json(err);
     }
   }
-  
+
 }
