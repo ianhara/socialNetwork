@@ -38,13 +38,8 @@ userSchema.virtual('friendCount')
     return `${this.friends.length}`;
   });
 
-// Middleware to update friend count when a friend is added or removed
-userSchema.post(['findOneAndUpdate', 'findOneAndRemove'], async function(doc) {
-  if (doc.friends) {
-    doc.friendCount = doc.friends.length;
-    await doc.save();
-  }
-});
+
+
 
 const User = model('User', userSchema);
 

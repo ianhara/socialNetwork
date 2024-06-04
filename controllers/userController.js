@@ -96,21 +96,15 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndRemove({ _id: req.params.userId });
-
+  
       if (!user) {
         return res.status(404).json({ message: 'No user with this id!' });
       }
-
-
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: 'user created but no user with this id!' });
-      }
-
-      res.json({ message: 'user successfully deleted!' });
+  
+      res.json({ message: 'User successfully deleted!' });
     } catch (err) {
       res.status(500).json(err);
     }
-  },
-};
+  }
+  
+}
