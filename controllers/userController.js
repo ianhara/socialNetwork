@@ -32,23 +32,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  async addFriend(req, res) {
-    try {
-      const user = await User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $addToSet: { friends: req.body } },
-        { runValidators: true, new: true }
-      );
 
-      if (!user) {
-        return res.status(404).json({ message: 'No user with this id!' });
-      }
-
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
   async updateUser(req, res) {
     try {
       const user = await User.findOneAndUpdate(
@@ -67,31 +51,48 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  async removeFriend(req, res) {
+   async addFriend(req, res) {
     try {
+      const { userId } = req.params;
+      const { friendId } = req.body; // Assuming the request body contains the friendId
 
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $addToSet: { friends: friendId } }, // Ensure friendId is passed to $addToSet
+        { runValidators: true, new: true }
+      );
 
       if (!user) {
         return res.status(404).json({ message: 'No user with this id!' });
       }
 
-      const user = await User.findOneAndUpdate(
-        { users: req.params.userId },
-        { $pull: { friends: req.params.friendId } },
-        { new: true }
-      );
-
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: 'user created but no user with this id!' });
-      }
-
-      res.json({ message: 'user successfully deleted!' });
+      res.json(user);
     } catch (err) {
       res.status(500).json(err);
     }
   },
+
+  async removeFriend(req, res) {
+    try {
+      const { userId, friendId } = req.params;
+
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { friends: friendId } },
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: 'No user with this id!' });
+      }
+
+      res.json({ message: 'Friend successfully removed!', user });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndRemove({ _id: req.params.userId });

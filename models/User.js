@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
 
-// Schema to create User model
 const userSchema = new Schema(
   {
     username: { 
@@ -8,20 +7,16 @@ const userSchema = new Schema(
       unique: true,
       required: true,
       trim: true
-
     },
-
     email: {
       type:String,
       required: true,
       unique:true,
       match:[/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/]
-
     },
     thoughts: [{
       type:Schema.Types.ObjectId,
       ref: "Thought",
-
     }],
     friends: [
       {
@@ -31,8 +26,6 @@ const userSchema = new Schema(
     ],
   },
   {
-    // Mongoose supports two Schema options to transform Objects after querying MongoDb: toJSON and toObject.
-    // Here we are indicating that we want virtuals to be included with our response, overriding the default behavior
     toJSON: {
       virtuals: true,
     },
@@ -40,16 +33,19 @@ const userSchema = new Schema(
   }
 );
 
-// Create a virtual property friend count which counts friends 
-userSchema
-  .virtual('friendCount')
-  // Getter
+userSchema.virtual('friendCount')
   .get(function () {
     return `${this.friends.length}`;
-  })
- 
+  });
 
-// Initialize our User model
+// Middleware to update friend count when a friend is added or removed
+userSchema.post(['findOneAndUpdate', 'findOneAndRemove'], async function(doc) {
+  if (doc.friends) {
+    doc.friendCount = doc.friends.length;
+    await doc.save();
+  }
+});
+
 const User = model('User', userSchema);
 
 module.exports = User;
